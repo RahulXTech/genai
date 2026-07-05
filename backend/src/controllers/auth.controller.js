@@ -2,6 +2,7 @@ const userModel = require("../models/user.model")
 const bcrypt = require("bcryptjs")
 const jwt = require("jsonwebtoken")
 const blacklistModel = require("../models/blacklist.model")
+
 /**
  * @name registerUserController
  * @descriptoin Register a new user, expects username, email and password in the requist 
@@ -91,7 +92,11 @@ async function loginUserController(req, res) {
        
 }
 
-
+/**
+ * @name logoutUserConrtoller
+ * @description clear token from user cookies and add the token in blacklist.
+ * @access Public
+ */
 
 async function logoutUserConrtoller(req, res) {
     try{
@@ -110,10 +115,30 @@ async function logoutUserConrtoller(req, res) {
     }
 }
 
+
+/**
+ * @name getMeController
+ * @description get the logged in user details
+ * @access Private
+ */
+async function getMeController(req, res){
+    const user = await userModel.findById(req.user.id);
+
+    res.status(200).json({
+        message : "user details fetched successfully.",
+        user: {
+            id : user._id,
+            username : user.username,
+            email : user.email
+        }
+    })
+}
+
 module.exports = {
     registerUserController,
     loginUserController,
-    logoutUserConrtoller
+    logoutUserConrtoller,
+    getMeController
 }
 
 
